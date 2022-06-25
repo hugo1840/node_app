@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\client",
+    "\\client\\src",
+    "\\client\\src\\router",
+    "\\client\\src\\store",
+    "\\client\\src\\views",
+    "\\config",
+    "\\models",
+    "\\routes",
+    "\\routes\\api"
+  ],
+  "SelectedNode": "\\client\\src\\views\\Register.vue",
+  "PreviewInSolutionExplorer": false
+}

@@ -1,4 +1,4 @@
 module.exports = {
-    mongoURI: "mongodb+srv://<username>:<password>@cluster0.ylpaf.mongodb.net/node_vue_element",
+    mongoURI: "mongodb+srv://benj2mon:dkhywZO0VdDxC18T@cluster0.ylpaf.mongodb.net/node_vue_element",
     secretOrKey: "secret"
 }

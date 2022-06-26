@@ -2,7 +2,7 @@
     <div class="register">
         <section class="form_container">
             <div class="manage_tip">
-                <span class="title">Kisu Management Platform</span>
+                <span class="title">马马虎虎资金管理系统</span>
                 <el-form :model="registerUser" :rules="rules" ref="registerForm" label-width="80px" class="registerForm">
                     <el-form-item label="用户名" prop="name">
                         <el-input v-model="registerUser.name" placeholder="请输入用户名"></el-input>
@@ -35,18 +35,82 @@
     export default {
     name: "register",
     components: {},
-    data(){
-      return {
-        registerUser: {
-          name: '',
-          email: '',
-          password: '',
-          password2: '',
-          identity: ''
+    data() {
+        var validatePass2 = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请再次输入密码'));
+            } else if (value !== this.registerUser.password) {
+                callback(new Error('两次输入密码不一致!'));
+            } else {
+                callback();
+            }
+        };
+
+        return {
+            registerUser: {
+                name: '',
+                email: '',
+                password: '',
+                password2: '',
+                identity: ''
+            },
+            rules: {
+                name: [
+                    {
+                        required: true,
+                        message: "用户名不能为空",
+                        trigger: "blur"
+                    },
+                    {
+                        min: 2,
+                        max: 30,
+                        message: "用户名长度在2至30个字符之间",
+                        trigger: "blur"
+                    }
+                ],
+                email: [
+                    {
+                        type: "email",
+                        required: true,
+                        message: "邮箱格式不正确",
+                        trigger: "blur"
+                    }
+                ],
+                password: [
+                    {
+                        required: true,
+                        message: "密码不能为空",
+                        trigger: "blur"
+                    },
+                    {
+                        min: 6,
+                        max: 30,
+                        message: "密码长度在6至30个字符之间",
+                        trigger: "blur"
+                    }
+                ],
+                password2: [
+                    {
+                        validator: validatePass2,
+                        trigger: "blur"
+                    }
+                ]
+            }
         }
-      }
-    }
- };
+     },
+     methods: {
+         submitForm(formName) {
+             this.$refs[formName].validate(valid => {
+                 if (valid) {
+                     alert('submit!');
+                 } else {
+                     console.log('error submit!!');
+                     return false;
+                 }
+             });
+         }
+     }
+ }
 </script>
 
 <style scoped>

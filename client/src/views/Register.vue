@@ -102,7 +102,17 @@
          submitForm(formName) {
              this.$refs[formName].validate(valid => {
                  if (valid) {
-                     alert('submit!');
+                     //alert('submit!');
+                     this.$axios.post("/api/users/register", this.registerUser)
+                         .then(res => {
+                             //注册成功
+                             this.$message({
+                                 message: "账号注册成功！",
+                                 type: 'success'
+                             });
+                         });
+                     //跳转到登录页面
+                     this.$router.push('/login');
                  } else {
                      console.log('error submit!!');
                      return false;

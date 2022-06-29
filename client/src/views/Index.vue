@@ -1,12 +1,15 @@
 <template>
     <div class="index">
-        Rome was not built in a day.
+        <HeadNav></HeadNav>
     </div>
 </template>
 
-<scripts>
+<script>
+    import HeadNav from "../components/HeadNav"
     export default {
-    name: "index",
-    components: {}
+      name: 'index',
+      components: {
+        HeadNav
+      }
     };
-</scripts>
+</script>

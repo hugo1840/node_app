@@ -87,7 +87,7 @@
             </el-table>
         </div>
 
-        <Dialog :dialogue="dialogue" @update="getProfile"></Dialog>
+        <Dialog :dialogue="dialogue" :formData="formData" @update="getProfile"></Dialog>
     </div>
 </template>
 
@@ -101,8 +101,19 @@
         data() {
             return {
                 tableData: [],
+                formData: {
+                    type: "",
+                    description: "",
+                    income: "",
+                    expense: "",
+                    cash: "",
+                    remark: "",
+                    id: ""
+                },
                 dialogue: {
-                    show: false
+                    show: false,
+                    title: '',
+                    option: 'edit'
                 }
             };
         },
@@ -118,14 +129,46 @@
                     .catch(err => console.log(err));
             },
             handleEdit(index, row) {
-                console.log("HANDLE EDIT");
+                //console.log("HANDLE EDIT");
+                this.dialogue = {
+                    show: true,
+                    title: "修改资金信息",
+                    option: "edit"
+                };
+                this.formData = {
+                    type: row.type,
+                    description: row.description,
+                    income: row.income,
+                    expense: row.expense,
+                    cash: row.cash,
+                    remark: row.remark,
+                    id: row._id
+                };
             },
             handleDelete(index, row) {
-                console.log("HANDLE DELETE");
+                //console.log("HANDLE DELETE");
+                this.$axios.delete(`/api/profiles/delete/${row._id}`)
+                    .then(res => {
+                        this.$message("删除成功");
+                        this.getProfile();
+                    })
             },
             handleAdd() {
                 //console.log("HANDLE ADD");
-                this.dialogue.show = true;
+                this.dialogue = {
+                    show: true,
+                    title: "添加资金信息",
+                    option: "add"
+                };
+                this.formData = {
+                    type: '',
+                    description: '',
+                    income: '',
+                    expense: '',
+                    cash: '',
+                    remark: '',
+                    id: ''
+                };
             }
         }
     }

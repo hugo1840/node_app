@@ -85,6 +85,21 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <!--分页-->
+            <el-row>
+                <el-col :span="24">
+                    <div class="pagination">
+                        <el-pagination @size-change="handleSizeChange"
+                                       @current-change="handleCurrentChange"
+                                       :current-page="paginations.page_index"
+                                       :page-sizes="paginations.page_sizes"
+                                       :page-size="paginations.page_size"
+                                       :layout="paginations.layout"
+                                       :total="paginations.total">
+                        </el-pagination>
+                    </div>
+                </el-col>
+            </el-row>
         </div>
 
         <Dialog :dialogue="dialogue" :formData="formData" @update="getProfile"></Dialog>
@@ -100,7 +115,15 @@
         },
         data() {
             return {
+                paginations: {
+                    page_index: 1, //当前页面
+                    total: 0,      //总页数
+                    page_size: 5,  //每页显示的记录条数
+                    page_sizes: [5, 10, 15, 20],  //可选择的page_size范围
+                    layout: "total, sizes, prev, pager, next, jumper"  //翻页属性
+                },
                 tableData: [],
+                allTableData: [],
                 formData: {
                     type: "",
                     description: "",
@@ -124,7 +147,9 @@
             getProfile() {
                 this.$axios.get('/api/profiles')
                     .then(res => {
-                        this.tableData = res.data;
+                        this.allTableData = res.data;
+                        //设置分页数据
+                        this.setPaginations();
                     })
                     .catch(err => console.log(err));
             },
@@ -169,6 +194,34 @@
                     remark: '',
                     id: ''
                 };
+            },
+            handleSizeChange(page_size) {
+                this.paginations.page_index = 1;
+                this.paginations.page_size = page_size;
+                this.tableData = this.allTableData.filter((item, index) => {
+                    return index < page_size;
+                });
+            },
+            handleCurrentChange(page) {
+                let index = this.paginations.page_size * (page - 1);
+                let nums = this.paginations.page_size * page;
+                let tables = [];   // 存储跳转页面要显示的记录
+
+                for (let i = index; i < nums; i++) {
+                    if (this.allTableData[i]) {
+                        tables.push(this.allTableData[i]);
+                    }
+                    this.tableData = tables;
+                }
+            },
+            setPaginations() {
+                this.paginations.total = this.allTableData.length;
+                this.paginations.page_index = 1;
+                this.paginations.page_size = 5;
+                //设置默认的分页数据
+                this.tableData = this.allTableData.filter((item, index) => {
+                    return index < this.paginations.page_size;
+                });
             }
         }
     }

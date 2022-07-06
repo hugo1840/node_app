@@ -1,11 +1,29 @@
 <template>
     <div class="fillContainer">
         <div>
-            <el-form :inline="true" ref="add_data">
+            <el-form :inline="true" ref="add_data" :model="search_data">
+                <el-form-item label="按时间筛选">
+                    <el-date-picker v-model="search_data.startTime"
+                                    type="datetime"
+                                    placeholder="选择开始时间">
+                    </el-date-picker>
+                    --
+                    <el-date-picker v-model="search_data.endTime"
+                                    type="datetime"
+                                    placeholder="选择结束时间">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary"
+                               size="small"
+                               icon="search"
+                               @click="handleSearch()">筛选</el-button>
+                </el-form-item>
                 <el-form-item class="btnRight">
                     <el-button type="primary"
                                size="small"
                                icon="view"
+                               v-if="user.identity == 'manager'"
                                @click="handleAdd()">添加</el-button>
                 </el-form-item>
             </el-form>
@@ -73,7 +91,8 @@
                                  align="center"
                                  fixed="right"
                                  width="180"
-                                 label="操作">
+                                 label="操作"
+                                 v-if="user.identity == 'manager'">
                     <template slot-scope="scope">
                         <el-button size="small"
                                    icon="edit"
@@ -115,6 +134,10 @@
         },
         data() {
             return {
+                search_data: {
+                    startTime: "",
+                    endTime: ""
+                },
                 paginations: {
                     page_index: 1, //当前页面
                     total: 0,      //总页数
@@ -124,6 +147,7 @@
                 },
                 tableData: [],
                 allTableData: [],
+                filterTableData: [],
                 formData: {
                     type: "",
                     description: "",
@@ -140,6 +164,11 @@
                 }
             };
         },
+        computed: {
+            user() {
+                return this.$store.getters.user;
+            }
+        },
         created() {
             this.getProfile();
         },
@@ -148,10 +177,32 @@
                 this.$axios.get('/api/profiles')
                     .then(res => {
                         this.allTableData = res.data;
+                        this.filterTableData = res.data;
                         //设置分页数据
                         this.setPaginations();
                     })
                     .catch(err => console.log(err));
+            },
+            handleSearch() {
+                if (!this.search_data.startTime || !this.search_data.endTime) {
+                    this.$message({
+                        type: "warning",
+                        message: "请选择时间区间"
+                    });
+                    this.getProfile();
+                    return;
+                }
+
+                const start_t = this.search_data.startTime.getTime();
+                const end_t = this.search_data.endTime.getTime();
+                this.allTableData = this.filterTableData.filter(item => {
+                    //console.log(item);
+                    let datee = new Date(item.date);
+                    let timee = datee.getTime();
+                    return timee >= start_t && timee <= end_t;
+                });
+
+                this.setPaginations();
             },
             handleEdit(index, row) {
                 //console.log("HANDLE EDIT");
